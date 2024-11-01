@@ -23,14 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("auth")
 public class AuthController {
 
-    private final AuthService authService;
     private final JwtService jwtService;
     private final JwtGenerator jwtGenerator;
     private final AuthenticationManager authenticationManager;
     private final AuthResourceMapper authResourceMapper;
 
-    public AuthController(AuthService authService, JwtService jwtService, JwtGenerator jwtGenerator, AuthenticationManager authenticationManager, AuthResourceMapper authResourceMapper) {
-        this.authService = authService;
+    public AuthController(JwtService jwtService, JwtGenerator jwtGenerator, AuthenticationManager authenticationManager, AuthResourceMapper authResourceMapper) {
         this.jwtService = jwtService;
         this.jwtGenerator = jwtGenerator;
         this.authenticationManager = authenticationManager;
@@ -48,6 +46,12 @@ public class AuthController {
         response.addCookie(jwtCookie);
         AuthResource authResource = authResourceMapper.toAuthResource(token, email);
         return new ResponseEntity<>(authResource, HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletResponse response) {
+        response.addCookie(jwtService.returnEmptyCookie());
+        return new ResponseEntity<>("Logged out successfully", HttpStatus.OK);
     }
 
     private String authenticateUser(String email, String password) {
