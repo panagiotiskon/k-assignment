@@ -21,6 +21,7 @@ public class User {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -68,7 +69,7 @@ public class User {
     }
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinTable(name = "user_roles",
+    @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), // User FK
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")) // Role FK
     public List<Role> getRoles() {

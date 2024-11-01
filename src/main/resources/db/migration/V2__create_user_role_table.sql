@@ -1,10 +1,11 @@
+-- V2_create_user_role_table.sql
 CREATE TABLE role
 (
     id   INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(128) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS user_roles
+CREATE TABLE IF NOT EXISTS user_role
 (
     user_id BIGINT,
     role_id INT,
