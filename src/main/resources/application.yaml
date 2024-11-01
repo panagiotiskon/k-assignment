@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: k-assignment
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/kAssignment?createDatabaseIfNotExist=true
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  main:
+    allow-bean-definition-overriding: true
+
