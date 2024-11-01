@@ -38,7 +38,7 @@ public class User {
         this.email = username;
     }
 
-    @Column(name ="password")
+    @Column(name = "password")
     public String getPassword() {
         return password;
     }
@@ -78,7 +78,6 @@ public class User {
     public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
-
 
 
 }
