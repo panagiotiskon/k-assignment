@@ -1,13 +1,12 @@
 package backend.kassignment.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -18,6 +17,7 @@ public class User {
     private String password;
     private Instant createdAt;
     private Instant updatedAt;
+    private List<Role> roles = new ArrayList<>();
 
     @Id
     @Column(name = "id")
@@ -47,7 +47,7 @@ public class User {
         this.password = password;
     }
 
-    @Column(name = "created_at")
+    @Column(name = "created_date")
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -57,7 +57,7 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_date")
     public Instant getUpdatedAt() {
         return updatedAt;
     }
@@ -66,4 +66,19 @@ public class User {
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), // User FK
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")) // Role FK
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+
+
 }
