@@ -1,6 +1,6 @@
 package backend.kassignment.security;
 
-import backend.kassignment.service.AuthService;
+import backend.kassignment.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -21,10 +21,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtGenerator tokenGenerator;
 
-    private final AuthService authService;
+    private final UserService userService;
 
-    public JwtAuthenticationFilter(AuthService authService) {
-        this.authService = authService;
+    public JwtAuthenticationFilter(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(StringUtils.hasText(token) && tokenGenerator.validateToken(token)) {
             String username = tokenGenerator.getUsernameFromJWT(token);
 
-            UserDetails userDetails = authService.loadUserByUsername(username);
+            UserDetails userDetails = userService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null,
                     userDetails.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

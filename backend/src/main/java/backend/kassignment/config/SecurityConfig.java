@@ -2,7 +2,7 @@ package backend.kassignment.config;
 
 import backend.kassignment.security.JwtAuthEntryPoint;
 import backend.kassignment.security.JwtAuthenticationFilter;
-import backend.kassignment.service.AuthService;
+import backend.kassignment.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,12 +21,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final JwtAuthEntryPoint entryPoint;
-    private final AuthService authService;
+    private final UserService userService;
 
 
-    public SecurityConfig(JwtAuthEntryPoint entryPoint, AuthService authService) {
+    public SecurityConfig(JwtAuthEntryPoint entryPoint, UserService userService) {
         this.entryPoint = entryPoint;
-        this.authService = authService;
+        this.userService = userService;
     }
 
     @Bean
@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/app/**").hasAnyRole("ADMIN", "CLIENT")
                         .requestMatchers("/auth/**").permitAll())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -59,6 +59,6 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(authService);
+        return new JwtAuthenticationFilter(userService);
     }
 }

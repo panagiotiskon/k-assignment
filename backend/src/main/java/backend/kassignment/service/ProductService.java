@@ -36,11 +36,4 @@ public class ProductService {
         return productPage.map(ProductResource::new);
     }
 
-//    public Page<ProductResource> getAllProducts(Pageable pageable) {
-//        Page<Product> productPage;
-//        productPage = productRepository.findAll(pageable);
-//        return productPage.map(ProductResource::new);
-//    }
-
-
 }
