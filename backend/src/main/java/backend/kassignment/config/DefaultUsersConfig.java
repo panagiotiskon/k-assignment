@@ -15,9 +15,9 @@ import java.util.List;
 @Configuration
 public class DefaultUsersConfig {
 
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     public DefaultUsersConfig(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {

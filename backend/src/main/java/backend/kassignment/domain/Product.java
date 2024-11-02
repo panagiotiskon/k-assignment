@@ -4,16 +4,20 @@ package backend.kassignment.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-@Entity
-@Table(name="product")
-public class Product {
+import java.time.Instant;
 
+@Entity
+@Table(name = "product")
+public class Product {
 
     private Long id;
     private Long sku;
     private String name;
     private String description;
     private Double price;
+    private String company;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +30,7 @@ public class Product {
         this.id = id;
     }
 
-    @Column(name="sku")
+    @Column(name = "sku")
     @NotNull
     public Long getSku() {
         return sku;
@@ -36,7 +40,7 @@ public class Product {
         this.sku = sku;
     }
 
-    @Column(name="name")
+    @Column(name = "name")
     @NotNull
     public String getName() {
         return name;
@@ -46,7 +50,7 @@ public class Product {
         this.name = name;
     }
 
-    @Column(name ="description")
+    @Column(name = "description")
     public String getDescription() {
         return description;
     }
@@ -63,5 +67,32 @@ public class Product {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    @Column(name = "company")
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    @Column(name = "created_date")
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Column(name = "updated_date")
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

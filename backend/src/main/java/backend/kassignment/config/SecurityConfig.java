@@ -1,5 +1,7 @@
-package backend.kassignment.security;
+package backend.kassignment.config;
 
+import backend.kassignment.security.JwtAuthEntryPoint;
+import backend.kassignment.security.JwtAuthenticationFilter;
 import backend.kassignment.service.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
