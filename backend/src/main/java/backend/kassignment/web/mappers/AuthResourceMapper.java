@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigInteger;
+import java.util.UUID;
+
 @Component
 public class AuthResourceMapper {
 
@@ -25,4 +28,7 @@ public class AuthResourceMapper {
         authResource.setRoles(user.getRoles());
         return authResource;
     }
+
+
+
 }

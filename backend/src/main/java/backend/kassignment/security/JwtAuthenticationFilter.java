@@ -31,12 +31,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws IOException, ServletException {
-        String token = getJWTFromRequest(request);
         String requestURI = request.getRequestURI();
-        if (requestURI.startsWith("/auth/login/oauth2") || requestURI.startsWith("/oauth2")) {
+        if (requestURI.startsWith("/auth") || requestURI.startsWith("/oauth2")) {
             filterChain.doFilter(request, response);
             return;
         }
+
+        String token = getJWTFromRequest(request);
+
         if(StringUtils.hasText(token) && tokenGenerator.validateToken(token)) {
             String username = tokenGenerator.getUsernameFromJWT(token);
 
