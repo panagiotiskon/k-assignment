@@ -1,23 +1,35 @@
 package backend.kassignment.web.requests;
 
+import java.util.List;
+
 public class ProductSearchFilter {
 
-    private String columnName;
-    private Object columnValue;
+    private List<String> company;
+    private Double minPrice;
+    private Double maxPrice;
 
-    public String getColumnName() {
-        return columnName;
+
+    public List<String> getCompany() {
+        return company;
     }
 
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
+    public void setCompany(List<String> company) {
+        this.company = company;
     }
 
-    public Object getColumnValue() {
-        return columnValue;
+    public Double getMinPrice() {
+        return minPrice;
     }
 
-    public void setColumnValue(Object columnValue) {
-        this.columnValue = columnValue;
+    public void setMinPrice(Double minPrice) {
+        this.minPrice = minPrice;
+    }
+
+    public Double getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(Double maxPrice) {
+        this.maxPrice = maxPrice;
     }
 }

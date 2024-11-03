@@ -8,36 +8,28 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
-
 public class ProductSpecifications {
 
-    public static Specification<Product> searchFilterSpecification(List<ProductSearchFilter> productSearchFilterList) {
+    public static Specification<Product> searchFilterSpecification(ProductSearchFilter filter) {
         return (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
 
-            for (ProductSearchFilter productSearchFilter : productSearchFilterList) {
-                String columnName = productSearchFilter.getColumnName();
-                Object columnValue = productSearchFilter.getColumnValue();
-
-                switch (columnName) {
-                    case "company":
-                        predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("company"),columnValue ));
-                        break;
-                    case "minPrice":
-                        if (columnValue instanceof Double) {
-                            predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("price"), (Double) columnValue));
-                        }
-                        break;
-                    case "maxPrice":
-                        if (columnValue instanceof Double) {
-                            predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThanOrEqualTo(root.get("price"), (Double) columnValue));
-                        }
-                        break;
-                    default:
-                        break;
+            if (filter.getCompany() != null && !filter.getCompany().isEmpty()) {
+                CriteriaBuilder.In<String> companyPredicate = criteriaBuilder.in(root.get("company"));
+                for (String country : filter.getCompany()) {
+                    companyPredicate.value(country);
                 }
+                predicate = criteriaBuilder.and(predicate, companyPredicate);
             }
+
+            if (filter.getMinPrice() != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("price"), filter.getMinPrice()));
+            }
+
+            if (filter.getMaxPrice() != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThanOrEqualTo(root.get("price"), filter.getMaxPrice()));
+            }
+
             return predicate;
         };
     }

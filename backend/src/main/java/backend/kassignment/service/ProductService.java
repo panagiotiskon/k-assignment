@@ -23,8 +23,8 @@ public class ProductService {
     }
 
 
-    public Page<ProductResource> getAllProducts(List<ProductSearchFilter> productSearchFilters, int page, int size) {
-        var specification = ProductSpecifications.searchFilterSpecification(productSearchFilters);
+    public Page<ProductResource> getAllProducts(ProductSearchFilter productSearchFilter, int page, int size) {
+        var specification = ProductSpecifications.searchFilterSpecification(productSearchFilter);
         if(page<1){
             page = 1;
         }
