@@ -36,8 +36,20 @@ const getAllProducts = (filter = {}, page = 0, size = 10) => {
         });
 };
 
+const createProduct = (productData) => {
+    return axios
+        .post(`${API_URL}/products`, productData)
+        .then(response => response.data)
+        .catch(error => {
+            console.error("Error while creating product:", error);
+            throw error;
+        });
+};
+
+
 const ProductService = {
-    getAllProducts
+    getAllProducts, 
+    createProduct
 };
 
 export default ProductService;
