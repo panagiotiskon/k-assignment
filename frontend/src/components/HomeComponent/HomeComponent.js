@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     MDBContainer,
     MDBCardBody,
@@ -16,8 +16,8 @@ import ProductService from '../../api/ProductApi';
 import './HomeComponent.scss';
 import mobile_phone from '../../assets/mobile_phone.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { faShoppingBasket } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingBasket, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import NavBarComponent from "../common/NavBar.js";
 
 const HomeComponent = () => {
     const [products, setProducts] = useState([]);
@@ -25,7 +25,9 @@ const HomeComponent = () => {
     const [selectedCompanies, setSelectedCompanies] = useState([]);
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
-
+    const [page, setPage] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
+    const observer = useRef();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -85,7 +87,11 @@ const HomeComponent = () => {
     };
 
     return (
+        <>
+        <NavBarComponent />
+        
         <MDBContainer className="product-page py-5">
+
             <MDBRow>
                 <h6>Φίλτρα</h6>
                 <MDBCol md="3" className="left-column">
@@ -120,9 +126,11 @@ const HomeComponent = () => {
                                 onChange={(e) => setMaxPrice(e.target.value)}
                                 className="mb-2"
                             />
-                            <MDBBtn onClick={handleApplyFilters} color="black" className="apply-btn">
-                                <FontAwesomeIcon icon={faArrowRight} />
-                            </MDBBtn>
+                            <div >
+                                <MDBBtn onClick={handleApplyFilters} color="black" className="apply-btn"  >
+                                    <FontAwesomeIcon icon={faArrowRight} />
+                                </MDBBtn>
+                            </div>
                         </div>
                     </MDBCard>
                 </MDBCol>
@@ -197,7 +205,7 @@ const HomeComponent = () => {
                 </MDBCol>
             </MDBRow>
         </MDBContainer>
-
+    </>
 
     );
 };

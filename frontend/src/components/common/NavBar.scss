@@ -1,0 +1,28 @@
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px!important; /* Remove extra padding */
+    width: 100%;
+}
+
+.navbar-logo {
+    max-width: 110px; /* Adjust logo size to reduce navbar height */
+    height: auto;
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+}
+
+.logout-btn{
+    margin: 1rem;
+    padding-left: 0;
+}
+
+.navbar-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
