@@ -21,11 +21,15 @@ const LoginComponent = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
 
-    const handleLogin = (data) => {
-        AuthService.login(data.email, data.password).then(
+    const handleLogin = (e) => {
+
+        e.preventDefault();
+        setLoading(true); 
+
+        AuthService.login(email, password).then(
             (response) => {
                 if (response.roles[0].name === "ROLE_ADMIN") {
-                    navigate("/products");
+                    navigate("/home");
                 }
             }, (error) => {
                 setLoading(false);
