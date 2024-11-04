@@ -46,10 +46,32 @@ const createProduct = (productData) => {
         });
 };
 
+const updateProduct = (productId, productData) => {
+    return axios 
+        .put(`${API_URL}/products/${productId}`, productData)
+        .then(response => response.data)
+        .catch(error => {
+            console.error("Error while updating product:", error);
+            throw error;
+        });
+}
+
+
+const deleteProduct = (productId) => {
+    return axios
+        .delete(`${API_URL}/products/${productId}`)
+        .then(response => response.data)
+        .catch(error=>{
+            console.error("Error while deleting product", error)
+            throw error;
+        })
+}
 
 const ProductService = {
     getAllProducts, 
-    createProduct
+    createProduct, 
+    updateProduct,
+    deleteProduct
 };
 
 export default ProductService;

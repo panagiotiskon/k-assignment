@@ -1,28 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import ProductService from '../../api/ProductApi';
 import './Modal.scss'
 
-const AddProductModal = ({ show, handleClose, refreshProducts }) => {
+const UpdateModal = ({ show, handleClose, refreshProducts, product }) => {
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [company, setCompany] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleCreateProduct = async () => {
-        setErrorMessage(''); 
+    useEffect(() => {
+        if (product) {
+            setProductName(product.name);
+            setDescription(product.description);
+            setPrice(product.price);
+            setCompany(product.company);
+        }
+    }, [product]);
+
+    const handleUpdateProduct = async () => {
+        setErrorMessage('');
         if (!productName || !description || !price || !company) {
-            setErrorMessage('Συμπληρώστε όλα τα πεδία');
+            setErrorMessage('Συμπληρώστε τουλάχιστον τα πεδία');
             return;
         }
 
         try {
-            await ProductService.createProduct({
-                name: productName,
-                description,
-                price: parseFloat(price),
-                company,
+            await ProductService.updateProduct(product.id, {
+                name: productName || product.name,
+                description: description || product.description,
+                price: price !== "" ? parseFloat(price) : product.price,
+                company: company || product.company,
             });
             refreshProducts();
             handleClose();
@@ -31,15 +40,15 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
             setPrice('');
             setCompany('');
         } catch (error) {
-            console.error("Error creating product:", error);
-            setErrorMessage('Failed to create product. Please try again.');
+            console.error("Error updating product:", error);
+            setErrorMessage('Failed to update product. Please try again.');
         }
     };
 
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Πρόσθεσε Προϊόν</Modal.Title>
+                <Modal.Title>Επεξεργάσια Προϊόντος</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
@@ -51,7 +60,6 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
                             value={productName}
                             onChange={(e) => setProductName(e.target.value)}
                             placeholder="Προσθέστε όνομα"
-                            isInvalid={!productName && errorMessage}
                         />
                     </Form.Group>
 
@@ -62,7 +70,6 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="Προσθέστε περιγραφή"
-                            isInvalid={!description && errorMessage}
                         />
                     </Form.Group>
 
@@ -73,7 +80,6 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
                             placeholder="Προσθέστε τιμή"
-                            isInvalid={!price && errorMessage}
                         />
                     </Form.Group>
 
@@ -84,17 +90,16 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
                             value={company}
                             onChange={(e) => setCompany(e.target.value)}
                             placeholder="Προσθέστε εταιρεία"
-                            isInvalid={!company && errorMessage}
                         />
                     </Form.Group>
                 </Form>
             </Modal.Body>
-            <Modal.Footer >
+            <Modal.Footer>
                 <Button variant="secondary" style={{fontSize:"14px"}} onClick={handleClose}>Ακύρωση</Button>
-                <Button variant="black" style={{fontSize:"14px"}} onClick={handleCreateProduct}>Επιβεβαίωση</Button>
+                <Button variant="black" style={{fontSize:"14px"}} onClick={handleUpdateProduct}>Επιβεβαίωση</Button>
             </Modal.Footer>
         </Modal>
     );
 };
 
-export default AddProductModal;
+export default UpdateModal;

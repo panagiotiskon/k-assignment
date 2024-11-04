@@ -16,9 +16,10 @@ import ProductService from '../../api/ProductApi';
 import './HomeComponent.scss';
 import mobile_phone from '../../assets/mobile_phone.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingBasket, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingBasket, faArrowRight, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
 import NavBarComponent from "../common/NavBar.js";
 import AddProductModal from "../common/AddProduct.js";
+import UpdateModal from "../common/UpdateProduct.js";
 
 const HomeComponent = () => {
     const [products, setProducts] = useState([]);
@@ -29,11 +30,13 @@ const HomeComponent = () => {
     const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
 
     const observer = useRef();
-    const handleClose = () => setIsModalOpen(false);
-    const handleOpen = () => setIsModalOpen(true);
+
+
     useEffect(() => {
         fetchProducts();
     }, []);
@@ -48,6 +51,8 @@ const HomeComponent = () => {
             console.error("Error fetching products:", error);
         }
     };
+
+
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -104,9 +109,29 @@ const HomeComponent = () => {
         fetchFilteredProducts();
     };
 
-    const toggleModal = () => {
-        console.log(isModalOpen);
-        setIsModalOpen(!isModalOpen);
+    const handleDeleteProduct = async (productId) => {
+        try {
+            await ProductService.deleteProduct(productId);
+            fetchFilteredProducts();
+        }
+        catch (error) {
+            console.error("Error deleting product:", error);
+            alert("Failed to delete product.");
+        }
+    }
+
+    const handleClose = () => setIsModalOpen(false);
+    
+    const handleOpen = () => setIsModalOpen(true);
+    
+    const handleUpdateOpen = (product) => {
+        setSelectedProduct(product);
+        setIsUpdateModalOpen(true);
+    };
+
+    const handleUpdateClose = () => {
+        setIsUpdateModalOpen(false);
+        setSelectedProduct(null);
     };
 
     return (
@@ -168,7 +193,7 @@ const HomeComponent = () => {
                                 justifyContent: "center",
                             }}>
                             <MDBBtn onClick={handleOpen}
-                                style={{width:"80%", justifyContent:"center", fontSize:"16px"}}
+                                style={{ width: "80%", justifyContent: "center", fontSize: "16px" }}
                                 color="black"
                                 className="mt-3 d-flex align-items-center mb-2 ">
                                 Πρόσθεσε Προϊόν
@@ -192,6 +217,43 @@ const HomeComponent = () => {
                                                 Ανακύκλωση €30
                                             </span>
                                         </div>
+                                        <MDBBtn
+                                            style={{
+                                                display: "flex",
+                                                alignSelf: "flex-end",
+                                                maxHeight: "1.5rem",
+                                                marginRight: "0.5rem",
+                                                marginTop: "0.5rem",
+                                            }}
+                                            className="btn-sm delete-post-btn"
+                                            color="danger"
+                                            onClick={() => handleDeleteProduct(product.id)}
+                                        >
+                                            <FontAwesomeIcon icon={faTimes} />
+                                        </MDBBtn>
+
+                                        <MDBBtn
+                                            style={{
+                                                display: "flex",
+                                                alignSelf: "flex-end",
+                                                maxHeight: "1.5rem",
+                                                marginRight: "0.5rem",
+                                                marginTop: "0.5rem",
+                                                maxWidth:"2.6rem"
+                                            }}
+                                            className="btn-sm edit-post-btn"
+                                            color="warning"
+                                            onClick={() => handleUpdateOpen(product)}
+                                        >
+                                            <FontAwesomeIcon icon={faPen} /> 
+                                        </MDBBtn>
+
+                                        <UpdateModal
+                                            show={isUpdateModalOpen}
+                                            handleClose={handleUpdateClose}
+                                            refreshProducts={fetchProducts}
+                                            product={selectedProduct}
+                                        />
                                         <MDBCardImage
                                             src={mobile_phone}
                                             className="mx-auto mt-3"
