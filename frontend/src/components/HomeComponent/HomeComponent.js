@@ -21,6 +21,7 @@ import NavBarComponent from "../common/NavBar.js";
 import AddProductModal from "../common/AddProduct.js";
 import UpdateProductModal from "../common/UpdateProduct.js";
 
+
 const HomeComponent = () => {
     const [userRole, setUserRole] = useState("")
     const [products, setProducts] = useState([]);
@@ -40,17 +41,119 @@ const HomeComponent = () => {
 
     const observer = useRef();
 
-    const fetchProducts = async () => {
+    // Initial Fetch of the list of companies and the user role
+
+    useEffect(() => {
+        fetchCompanies();
+        fetchUserRole();
+    }, []);
+
+    // fetch products based on page and filters
+
+    const fetchProducts = async (page = 1, filters = {}) => {
         setIsLoading(true);
         try {
-            const data = await ProductService.getAllProducts();
-            setProducts(data.content);
+            const data = await ProductService.getAllProducts(filters, page);
+            const newProducts = data.content;
+
+
+            // If this is the first page, reset the products list
+            if (page === 1) {
+                setProducts(newProducts);
+            } else {
+                setProducts(prevProducts => [...prevProducts, ...newProducts]);
+            }
+
+            setTotalPages(data.page.totalPages);
+            setPage(data.page.number + 1);
+
         } catch (error) {
             console.error("Error fetching products:", error);
         } finally {
             setIsLoading(false);
         }
     };
+
+
+
+    useEffect(() => {
+
+        const filters = {
+            companies: selectedCompanies,
+            minPrice: minPrice ? parseFloat(minPrice) : undefined,
+            maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+        };
+
+        fetchProducts(page, filters);
+
+    }, [page, selectedCompanies, minPrice, maxPrice]);
+
+    // useEffect(() => {
+    //     const filters = {
+    //         companies: selectedCompanies,
+    //         minPrice: minPrice ? parseFloat(minPrice) : undefined,
+    //         maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+    //     };
+
+
+    //     fetchProducts(page, filters);
+
+
+    // }, []);
+
+    const handleApplyFilters = () => {
+        // Reset products and page number
+        setProducts([]);
+        setPage(1);
+
+        // Create filter object with current min and max prices and selected companies
+        const filters = {
+            companies: selectedCompanies,
+            minPrice: minPrice ? parseFloat(minPrice) : undefined,
+            maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+        };
+
+
+        // Fetch products with updated filters
+        fetchProducts(1, filters);
+    };
+
+    const lastProductElementRef = useCallback(node => {
+        if (isLoading) return;
+        if (observer.current) observer.current.disconnect();
+
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && page < totalPages) {
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+
+        if (node) observer.current.observe(node);
+    }, [isLoading, totalPages, page]);
+
+    // useEffect(() => {
+    //     fetchProducts(page);
+    // }, [page, selectedCompanies, minPrice, maxPrice]);
+
+
+
+    // const handleApplyFilters = () => {
+    //     setProducts([]); // Reset products on new filter
+    //     setPage(1); // Reset page to 0
+    //     fetchProducts(1); // Fetch the first page with new filters
+    // };
+
+    // const fetchProducts = async () => {
+    //     setIsLoading(true);
+    //     try {
+    //         const data = await ProductService.getAllProducts();
+    //         setProducts(data.content);
+    //     } catch (error) {
+    //         console.error("Error fetching products:", error);
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
 
     const fetchCompanies = async () => {
         try {
@@ -61,54 +164,54 @@ const HomeComponent = () => {
         }
     };
 
-    useEffect(() => {
-        fetchProducts();
-        fetchCompanies();
-
-        const fetchUserRole = async () => {
-            try {
-                const data = await AuthService.getCurrentUser();
-                setUserRole(data.role);
-            } catch (error) {
-                console.error("Error fetching user role:", error);
-            }
-        };
-        fetchUserRole();
-    }, []);
-    // This is to reload everytime a company is selected
-
-    useEffect(() => {
-        const fetchProductsByCompany = async () => {
-            try {
-                const data = await ProductService.getAllProducts({ companies: selectedCompanies });
-                setProducts(data.content);
-            } catch (error) {
-                console.error("Error fetching products by company:", error);
-            }
-        };
-        fetchProductsByCompany();
-    }, [selectedCompanies]);
-
-
-    // For multiple filters
-
-    const fetchFilteredProducts = async () => {
+    const fetchUserRole = async () => {
         try {
-            const filters = {
-                companies: selectedCompanies,
-                minPrice: minPrice ? parseFloat(minPrice) : undefined,
-                maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-            };
-            const data = await ProductService.getAllProducts(filters);
-            setProducts(data.content);
+            const data = await AuthService.getCurrentUser();
+            setUserRole(data.role);
         } catch (error) {
-            console.error("Error fetching filtered products:", error);
+            console.error("Error fetching user role:", error);
         }
     };
+
+    // useEffect(() => {
+
+
+
+    //     const fetchProductsByCompany = async () => {
+    //         try {
+    //             const data = await ProductService.getAllProducts({ companies: selectedCompanies }, 1);
+    //             setProducts(data.content);
+    //         } catch (error) {
+    //             console.error("Error fetching products by company:", error);
+    //         }
+    //     };
+
+    //     fetchProductsByCompany();
+
+    // }, [selectedCompanies]);
+
+
+
+    // // For multiple filters
+
+    // const fetchFilteredProducts = async () => {
+    //     try {
+    //         const filters = {
+    //             companies: selectedCompanies,
+    //             minPrice: minPrice ? parseFloat(minPrice) : undefined,
+    //             maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+    //         };
+    //         const data = await ProductService.getAllProducts(filters);
+    //         setProducts(data.content);
+    //     } catch (error) {
+    //         console.error("Error fetching filtered products:", error);
+    //     }
+    // };
 
 
 
     const handleCompanySelect = (company) => {
+        setPage(1)
         setSelectedCompanies(prevSelected =>
             prevSelected.includes(company)
                 ? prevSelected.filter(c => c !== company)
@@ -116,14 +219,11 @@ const HomeComponent = () => {
         );
     };
 
-    const handleApplyFilters = () => {
-        fetchFilteredProducts();
-    };
 
     const handleDeleteProduct = async (productId) => {
         try {
             await ProductService.deleteProduct(productId);
-            fetchFilteredProducts();
+            setProducts(products.filter(product => product.id !== productId));
         }
         catch (error) {
             console.error("Error deleting product:", error);
@@ -143,6 +243,7 @@ const HomeComponent = () => {
     const handleUpdateClose = () => {
         setIsUpdateModalOpen(false);
         setSelectedProduct(null);
+        fetchCompanies();
     };
 
     return (
@@ -218,28 +319,31 @@ const HomeComponent = () => {
                     <MDBCol className="product-container">
 
                         {products.length > 0 ? (
-                            products.map(product => (
-                                <MDBCol key={product.id} className="mb-4">
+                            products.map((product, index) => (
+                                <MDBCol key={product.id}
+                                    ref={index === products.length - 1 ? lastProductElementRef : null}
+                                    className="mb-4">
                                     <MDBCard className="product-card shadow-sm">
                                         <div className="position-relative">
                                             <span className="badge bg-success position-absolute top-0 start-0 m-2">
                                                 Ανακύκλωση €30
                                             </span>
                                         </div>
-                                        {userRole === admin && (<>                                  <MDBBtn
-                                            style={{
-                                                display: "flex",
-                                                alignSelf: "flex-end",
-                                                maxHeight: "1.5rem",
-                                                marginRight: "0.5rem",
-                                                marginTop: "0.5rem",
-                                            }}
-                                            className="btn-sm delete-post-btn"
-                                            color="danger"
-                                            onClick={() => handleDeleteProduct(product.id)}
-                                        >
-                                            <FontAwesomeIcon icon={faTimes} />
-                                        </MDBBtn>
+                                        {userRole === admin && (<>
+                                            <MDBBtn
+                                                style={{
+                                                    display: "flex",
+                                                    alignSelf: "flex-end",
+                                                    maxHeight: "1.5rem",
+                                                    marginRight: "0.5rem",
+                                                    marginTop: "0.5rem",
+                                                }}
+                                                className="btn-sm delete-post-btn"
+                                                color="danger"
+                                                onClick={() => handleDeleteProduct(product.id)}
+                                            >
+                                                <FontAwesomeIcon icon={faTimes} />
+                                            </MDBBtn>
 
                                             <MDBBtn
                                                 style={{
@@ -314,11 +418,12 @@ const HomeComponent = () => {
                             ))
                         ) : (
                             <MDBCol md="12">
-                                <p>No products available.</p>
+                                <p>Κανένα διαθέσιμο προϊόν</p>
                             </MDBCol>
                         )}
                     </MDBCol>
                 </MDBRow>
+                {isLoading && <p>Loading more products...</p>}
             </MDBContainer>
 
         </>

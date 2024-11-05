@@ -5,7 +5,7 @@ const API_URL = "http://localhost:8080/app";
 axios.defaults.withCredentials = true;
 
 const getAllProducts = (filter = {}, page = 0, size = 10) => {
-
+    console.log(page, size);
     const queryParams = new URLSearchParams();
 
     queryParams.append("page", page);
