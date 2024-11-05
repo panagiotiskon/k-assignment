@@ -2,7 +2,10 @@ package backend.kassignment.service;
 
 import backend.kassignment.domain.Role;
 import backend.kassignment.domain.User;
+import backend.kassignment.domain.exceptions.UserNotFoundException;
 import backend.kassignment.domain.repository.UserRepository;
+import backend.kassignment.web.resources.UserResource;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +39,19 @@ public class UserService implements UserDetailsService {
     }
 
     public User findUserByEmail(String email) {
-        return userRepository.findUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return userRepository.findUserByEmail(email).
+                orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    public UserResource getUserById(Long userId){
+        User user =  userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        return new UserResource(user);
+    }
+
+    @Transactional
+    public void deleteUserById(Long userId){
+        userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        userRepository.deleteById(userId);
     }
 
 }

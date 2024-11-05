@@ -20,15 +20,6 @@ public class ProductResource {
         this.company = product.getCompany();
     }
 
-    public ProductResource(Long id, Long sku, String name, String description, Double price, String company) {
-        this.id = id;
-        this.sku = sku;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.company = company;
-    }
-
     public Long getId() {
         return id;
     }

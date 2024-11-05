@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Instant;
 import java.util.List;
 
 @Configuration
@@ -32,12 +33,25 @@ public class DefaultUsersConfig {
         return args -> {
             Role adminRole = roleRepository.findByName("ROLE_ADMIN");
             Role clientRole = roleRepository.findByName("ROLE_CLIENT");
+
             if (userRepository.findUserByEmail("admin@example.com").isEmpty()) {
                 User admin = new User();
                 admin.setEmail("admin@example.com");
                 admin.setPassword(passwordEncoder.encode("password"));
-                admin.setRoles(List.of(adminRole)); // assign admin role
+                admin.setRoles(List.of(adminRole));
+                admin.setCreatedAt(Instant.now());
+                admin.setUpdatedAt(Instant.now());
                 userRepository.save(admin);
+            }
+
+            if(userRepository.findUserByEmail("client@example.com").isEmpty()) {
+                User client = new User();
+                client.setEmail("client@example.com");
+                client.setPassword(passwordEncoder.encode("password"));
+                client.setRoles(List.of(clientRole));
+                client.setCreatedAt(Instant.now());
+                client.setUpdatedAt(Instant.now());
+                userRepository.save(client);
             }
         };
     }
