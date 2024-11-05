@@ -11,7 +11,7 @@ public class OrderItem {
     private Long id;
     private Order order;
     private Product product;
-    private Integer quantity;
+    private Integer amount;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -45,13 +45,13 @@ public class OrderItem {
         this.product = product;
     }
 
-    @Column(name = "quantity")
-    public Integer getQuantity() {
-        return quantity;
+    @Column(name = "amount")
+    public Integer getAmount() {
+        return amount;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setAmount(Integer quantity) {
+        this.amount = quantity;
     }
 
     @Column(name = "created_date")
