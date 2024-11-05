@@ -130,6 +130,7 @@ public class ProductService {
                 .findAll()
                 .stream()
                 .map(Product::getCompany)
+                .distinct()
                 .toList();
     }
 

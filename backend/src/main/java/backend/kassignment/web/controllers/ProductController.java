@@ -76,12 +76,10 @@ public class ProductController {
         productService.deleteProductById(productId);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/companies")
     public ResponseEntity<List<String>> getAllProductCompanies() {
         List<String> productCompanies = productService.getAllProductCompanies();
         return ResponseEntity.ok(productCompanies);
     }
-
 
 }

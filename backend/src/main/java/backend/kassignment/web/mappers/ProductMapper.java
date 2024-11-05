@@ -26,9 +26,9 @@ public class ProductMapper {
 
     public Product updateProduct(Product product, ProductCreateUpdateRequest request) {
         product.setName(request.getName());
-        product.setDescription(product.getDescription());
-        product.setPrice(product.getPrice());
-        product.setCompany(product.getCompany());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setCompany(request.getCompany());
         product.setUpdatedAt(Instant.now());
         return product;
     }
