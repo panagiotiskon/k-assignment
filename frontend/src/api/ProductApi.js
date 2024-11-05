@@ -67,11 +67,22 @@ const deleteProduct = (productId) => {
         })
 }
 
+const getProductCompanies = () =>{
+    return axios
+        .get(`${API_URL}/products/companies`)
+        .then(response => response.data)
+        .catch(error=>{
+            console.error("Error while fetching product companies", error); 
+            throw error; 
+        })
+}
+
 const ProductService = {
     getAllProducts, 
     createProduct, 
     updateProduct,
-    deleteProduct
+    deleteProduct, 
+    getProductCompanies
 };
 
 export default ProductService;

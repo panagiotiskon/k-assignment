@@ -3,7 +3,7 @@ import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import ProductService from '../../api/ProductApi';
 import './Modal.scss'
 
-const UpdateModal = ({ show, handleClose, refreshProducts, product }) => {
+const UpdateProductModal = ({ show, handleClose, refreshProducts, product }) => {
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -95,11 +95,11 @@ const UpdateModal = ({ show, handleClose, refreshProducts, product }) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" style={{fontSize:"14px"}} onClick={handleClose}>Ακύρωση</Button>
-                <Button variant="black" style={{fontSize:"14px"}} onClick={handleUpdateProduct}>Επιβεβαίωση</Button>
+                <Button variant="secondary" style={{ fontSize: "14px" }} onClick={handleClose}>Ακύρωση</Button>
+                <Button variant="black" style={{ fontSize: "14px" }} onClick={handleUpdateProduct}>Επιβεβαίωση</Button>
             </Modal.Footer>
         </Modal>
     );
 };
 
-export default UpdateModal;
+export default UpdateProductModal;

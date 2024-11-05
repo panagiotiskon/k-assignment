@@ -28,7 +28,7 @@ const LoginComponent = () => {
 
         AuthService.login(email, password).then(
             (response) => {
-                if (response.roles[0].name === "ROLE_ADMIN") {
+                if (response.roles[0].name === "ROLE_ADMIN" || response.roles[0].name === "ROLE_CLIENT" ) {
                     navigate("/home");
                 }
             }, (error) => {
@@ -113,7 +113,7 @@ const LoginComponent = () => {
                     )}
 
                     <MDBBtn type="submit" className="w-100 mb-4" disabled={loading} style={{ backgroundColor: "black", textTransform: "unset", fontSize: "16px" }}>
-                        {loading ? <MDBSpinner small role="status" tag="span" /> : "Σύνδεση"}
+                        {loading ? <MDBSpinner role="status" tag="span" /> : "Σύνδεση"}
                     </MDBBtn>
 
                     <div className="text-center" style={{ color: "black" }}>

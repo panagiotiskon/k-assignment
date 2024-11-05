@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
     MDBContainer,
     MDBCardBody,
@@ -10,8 +10,8 @@ import {
     MDBInput,
     MDBCardImage,
     MDBIcon,
-
 } from "mdb-react-ui-kit";
+import AuthService from "../../api/AuthenticationAPI.js";
 import ProductService from '../../api/ProductApi';
 import './HomeComponent.scss';
 import mobile_phone from '../../assets/mobile_phone.png'
@@ -19,56 +19,63 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingBasket, faArrowRight, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
 import NavBarComponent from "../common/NavBar.js";
 import AddProductModal from "../common/AddProduct.js";
-import UpdateModal from "../common/UpdateProduct.js";
+import UpdateProductModal from "../common/UpdateProduct.js";
 
 const HomeComponent = () => {
+    const [userRole, setUserRole] = useState("")
     const [products, setProducts] = useState([]);
     const [companies, setCompanies] = useState([]);
     const [selectedCompanies, setSelectedCompanies] = useState([]);
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
     const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
+    const admin = "ROLE_ADMIN";
+    const client = "ROLE_CLIENT";
 
     const observer = useRef();
 
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
     const fetchProducts = async () => {
+        setIsLoading(true);
         try {
             const data = await ProductService.getAllProducts();
             setProducts(data.content);
-            const uniqueCompanies = [...new Set(data.content.map(product => product.company))];
-            setCompanies(uniqueCompanies);
         } catch (error) {
             console.error("Error fetching products:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-
+    const fetchCompanies = async () => {
+        try {
+            const companyList = await ProductService.getProductCompanies();
+            setCompanies(companyList);
+        } catch (error) {
+            console.error("Error fetching companies:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const data = await ProductService.getAllProducts();
-                setProducts(data.content);
+        fetchProducts();
+        fetchCompanies();
 
-                const uniqueCompanies = [...new Set(data.content.map(product => product.company))];
-                setCompanies(uniqueCompanies);
+        const fetchUserRole = async () => {
+            try {
+                const data = await AuthService.getCurrentUser();
+                setUserRole(data.role);
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error("Error fetching user role:", error);
             }
         };
-
-        fetchProducts();
+        fetchUserRole();
     }, []);
+    // This is to reload everytime a company is selected
 
     useEffect(() => {
         const fetchProductsByCompany = async () => {
@@ -79,9 +86,11 @@ const HomeComponent = () => {
                 console.error("Error fetching products by company:", error);
             }
         };
-
         fetchProductsByCompany();
     }, [selectedCompanies]);
+
+
+    // For multiple filters
 
     const fetchFilteredProducts = async () => {
         try {
@@ -96,6 +105,8 @@ const HomeComponent = () => {
             console.error("Error fetching filtered products:", error);
         }
     };
+
+
 
     const handleCompanySelect = (company) => {
         setSelectedCompanies(prevSelected =>
@@ -121,9 +132,9 @@ const HomeComponent = () => {
     }
 
     const handleClose = () => setIsModalOpen(false);
-    
+
     const handleOpen = () => setIsModalOpen(true);
-    
+
     const handleUpdateOpen = (product) => {
         setSelectedProduct(product);
         setIsUpdateModalOpen(true);
@@ -137,9 +148,7 @@ const HomeComponent = () => {
     return (
         <>
             <NavBarComponent />
-
             <MDBContainer className="product-page py-5">
-
                 <MDBRow>
                     <h6>Φίλτρα</h6>
                     <MDBCol md="3" className="left-column">
@@ -186,7 +195,7 @@ const HomeComponent = () => {
                                 </div>
                             </div>
                         </MDBCard>
-                        <div
+                        {userRole === admin && (<div
                             style={{
                                 display: "flex",
                                 alignItems: "center",
@@ -198,7 +207,7 @@ const HomeComponent = () => {
                                 className="mt-3 d-flex align-items-center mb-2 ">
                                 Πρόσθεσε Προϊόν
                             </MDBBtn>
-                        </div >
+                        </div >)}
                         <AddProductModal
                             show={isModalOpen}
                             handleClose={handleClose}
@@ -217,7 +226,7 @@ const HomeComponent = () => {
                                                 Ανακύκλωση €30
                                             </span>
                                         </div>
-                                        <MDBBtn
+                                        {userRole === admin && (<>                                  <MDBBtn
                                             style={{
                                                 display: "flex",
                                                 alignSelf: "flex-end",
@@ -232,23 +241,23 @@ const HomeComponent = () => {
                                             <FontAwesomeIcon icon={faTimes} />
                                         </MDBBtn>
 
-                                        <MDBBtn
-                                            style={{
-                                                display: "flex",
-                                                alignSelf: "flex-end",
-                                                maxHeight: "1.5rem",
-                                                marginRight: "0.5rem",
-                                                marginTop: "0.5rem",
-                                                maxWidth:"2.6rem"
-                                            }}
-                                            className="btn-sm edit-post-btn"
-                                            color="warning"
-                                            onClick={() => handleUpdateOpen(product)}
-                                        >
-                                            <FontAwesomeIcon icon={faPen} /> 
-                                        </MDBBtn>
+                                            <MDBBtn
+                                                style={{
+                                                    display: "flex",
+                                                    alignSelf: "flex-end",
+                                                    maxHeight: "1.5rem",
+                                                    marginRight: "0.5rem",
+                                                    marginTop: "0.5rem",
+                                                    maxWidth: "2.6rem"
+                                                }}
+                                                className="btn-sm edit-post-btn"
+                                                color="warning"
+                                                onClick={() => handleUpdateOpen(product)}
+                                            >
+                                                <FontAwesomeIcon icon={faPen} />
+                                            </MDBBtn> </>)}
 
-                                        <UpdateModal
+                                        <UpdateProductModal
                                             show={isUpdateModalOpen}
                                             handleClose={handleUpdateClose}
                                             refreshProducts={fetchProducts}
@@ -302,7 +311,6 @@ const HomeComponent = () => {
                                         </MDBCardBody>
                                     </MDBCard>
                                 </MDBCol>
-
                             ))
                         ) : (
                             <MDBCol md="12">
