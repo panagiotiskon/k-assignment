@@ -18,7 +18,7 @@ import ProductService from '../../api/ProductApi';
 import './HomeComponent.scss';
 import mobile_phone from '../../assets/mobile_phone.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingBasket, faArrowRight, faTimes, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingBasket, faArrowRight, faTimes, faPen, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import NavBarComponent from "../common/NavBar.js";
 import AddProductModal from "../common/AddProduct.js";
 import UpdateProductModal from "../common/UpdateProduct.js";
@@ -198,43 +198,6 @@ const HomeComponent = () => {
         }
     };
 
-    // useEffect(() => {
-
-
-
-    // const fetchProductsByCompany = async () => {
-    // try {
-    // const data = await ProductService.getAllProducts({ companies: selectedCompanies }, 1);
-    // setProducts(data.content);
-    // } catch (error) {
-    // console.error("Error fetching products by company:", error);
-    // }
-    // };
-
-    // fetchProductsByCompany();
-
-    // }, [selectedCompanies]);
-
-
-
-    // // For multiple filters
-
-    // const fetchFilteredProducts = async () => {
-    // try {
-    // const filters = {
-    // companies: selectedCompanies,
-    // minPrice: minPrice ? parseFloat(minPrice) : undefined,
-    // maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-    // };
-    // const data = await ProductService.getAllProducts(filters);
-    // setProducts(data.content);
-    // } catch (error) {
-    // console.error("Error fetching filtered products:", error);
-    // }
-    // };
-
-
-
     const handleCompanySelect = (company) => {
         setPage(1)
         setSelectedCompanies(prevSelected =>
@@ -243,7 +206,6 @@ const HomeComponent = () => {
                 : [...prevSelected, company]
         );
     };
-
 
     const handleDeleteProduct = async (productId) => {
         try {
@@ -274,33 +236,6 @@ const HomeComponent = () => {
     return (
         <>
             <NavBarComponent />
-            <button onClick={toggleCart}>View Cart</button>
-
-            {isCartOpen && <Modal show={isCartOpen} onHide={toggleCart}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Δες τα προιόντα</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {cartItems.length > 0 ? (
-                        <ul>
-                            {cartItems.map((item) => (
-                                <li key={item.productId}>
-                                    Product ID: {item.productId}, Quantity: {item.quantity}
-                                    <button onClick={() => incrementQuantity(item.productId)}>+</button>
-                                    <button onClick={() => decrementQuantity(item.productId)}>-</button>
-                                    <button onClick={() => removeItem(item.productId)}>Remove</button>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>Your cart is empty.</p>
-                    )}
-                </Modal.Body>
-                <Modal.Footer >
-                    <Button variant="secondary" style={{ fontSize: "14px" }} onClick={toggleCart}>Ακύρωση</Button>
-                    <Button variant="black" style={{ fontSize: "14px" }} onClick={submitCart}>Αγορά</Button>
-                </Modal.Footer>
-            </Modal>}
             <MDBContainer className="product-page py-5">
                 <MDBRow>
                     <h6>Φίλτρα</h6>
@@ -366,10 +301,71 @@ const HomeComponent = () => {
                             handleClose={handleClose}
                             refreshProducts={fetchProducts}
                         />
+                        {userRole === client && (<div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}>
+                            <MDBBtn onClick={toggleCart}
+                                style={{ width: "80%", justifyContent: "center", fontSize: "16px" }}
+                                color="black"
+                                className="mt-3 d-flex align-items-center mb-2 ">
+                                Καλάθι
+                            </MDBBtn>
+                        </div >)}
+                        {isCartOpen && <Modal show={isCartOpen} onHide={toggleCart}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Δες τα προιόντα</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                {cartItems.length > 0 ? (
+                                    <ul className="cart-item-list">
+                                        {cartItems.map((item) => (
+                                            <li key={item.productId} className="cart-item d-flex justify-content-between align-items-center">
+                                                <div className="cart-item-info">
+                                                    <p>Κωδικός προϊόντος: {item.productId}</p>
+                                                    <p>Ποσότητα: {item.quantity}</p>
+                                                </div>
+                                                <div className="cart-item-controls">
+                                                    <MDBBtn
+                                                        color="dark"
+                                                        size="sm"
+                                                        onClick={() => incrementQuantity(item.productId)}
+                                                        className="me-2"
+                                                    >
+                                                        <FontAwesomeIcon icon={faPlus} />
+                                                    </MDBBtn>
+                                                    <MDBBtn
+                                                        color="dark"
+                                                        size="sm"
+                                                        onClick={() => decrementQuantity(item.productId)}
+                                                        className="me-2"
+                                                    >
+                                                        <FontAwesomeIcon icon={faMinus} />
+                                                    </MDBBtn>
+                                                    <MDBBtn
+                                                        color="danger"
+                                                        size="sm"
+                                                        onClick={() => removeItem(item.productId)}
+                                                    >
+                                                        <FontAwesomeIcon icon={faTimes} />
+                                                    </MDBBtn>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>Το καλάθι είναι άδειο.</p>
+                                )}
+                            </Modal.Body>
+                            <Modal.Footer >
+                                <Button variant="secondary" style={{ fontSize: "14px" }} onClick={toggleCart}>Ακύρωση</Button>
+                                <Button variant="black" style={{ fontSize: "14px" }} onClick={submitCart}>Αγορά</Button>
+                            </Modal.Footer>
+                        </Modal>}
                     </MDBCol>
-
                     <MDBCol className="product-container">
-
                         {products.length > 0 ? (
                             products.map((product, index) => (
                                 <MDBCol key={product.id}
@@ -450,13 +446,13 @@ const HomeComponent = () => {
                                                 <p>Διαθέσιμο για δωρεάν παράδοση σε 20’</p>
                                             </div>
 
-                                            <div className="d-flex justify-content-between align-items-center">
+                                            {userRole === client && <div className="d-flex justify-content-between align-items-center">
                                                 <p className="fw-bold mb-1 price ">€{product.price}</p>
                                                 <MDBBtn color="warning" onClick={() => addToCart(product.id)}>
                                                     <MDBIcon fas icon="shopping-cart" />
                                                     <FontAwesomeIcon icon={faShoppingBasket} style={{ color: 'black' }} />
                                                 </MDBBtn>
-                                            </div>
+                                            </div>}
 
                                             <div className="form-check mt-3">
                                                 <input className="form-check-input" type="checkbox" id={`compare-${product.id}`} />
@@ -476,7 +472,7 @@ const HomeComponent = () => {
                     </MDBCol>
                 </MDBRow>
                 {isLoading && <p>Loading more products...</p>}
-            </MDBContainer>
+            </MDBContainer >
 
         </>
 
