@@ -7,8 +7,8 @@ services:
     ports:                      #  host port and container port
       - "3307:3306"
     environment:                    # basic environment variables - they differ in each image
-      - MYSQL_USER=root                 # set up a user and a password
-      - MYSQL_PASSWORD=password
+#      - MYSQL_USER=root                 # set up a user and a password
+#      - MYSQL_PASSWORD=password
       - MYSQL_ROOT_PASSWORD=password      # this is the predefined root password
       - MYSQL_DATABASE=kAssignment            # db name
     healthcheck:
@@ -22,7 +22,7 @@ services:
     build:                              # build the image based on the Dockerfile
       dockerfile: Dockerfile
     image: app:latest                   # name the image
-    container_name: kAssignment_app
+    container_name: k_assignment_server
     depends_on:                          # db needs to start before the ap so add dependency
       db:
         condition: service_healthy
