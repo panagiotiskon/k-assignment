@@ -19,11 +19,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Void> handleUserNotFoundException(Exception ex) {
         return ResponseEntity.notFound().build();
     }
-    @ExceptionHandler(value = {OrderNotFoundException.class})
+    @ExceptionHandler(value = {PurchaseNotFoundException.class})
     public ResponseEntity<Void> handleOrderNotFoundException(Exception ex) {
         return ResponseEntity.notFound().build();
     }
-    @ExceptionHandler(value = {OrderItemNotFoundException.class})
+    @ExceptionHandler(value = {PurchaseItemNotFoundException.class})
     public ResponseEntity<Void> handleOrderItemNotFoundException(Exception ex) {
         return ResponseEntity.notFound().build();
     }

@@ -1,10 +1,10 @@
 package backend.kassignment.web.resources;
 
-public class OrderItemResource {
+public class PurchaseItemResource {
 
     private Long id;
     private Long productId;
-    private Long quantity;
+    private Integer quantity;
 
     public Long getId() {
         return id;
@@ -22,11 +22,11 @@ public class OrderItemResource {
         this.productId = productId;
     }
 
-    public Long getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Long quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 }

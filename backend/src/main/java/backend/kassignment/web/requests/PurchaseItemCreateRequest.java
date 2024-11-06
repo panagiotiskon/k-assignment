@@ -2,7 +2,7 @@ package backend.kassignment.web.requests;
 
 import jakarta.validation.constraints.NotNull;
 
-public class OrderItemCreateRequest {
+public class PurchaseItemCreateRequest {
 
     @NotNull
     Long productId;

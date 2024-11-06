@@ -2,12 +2,12 @@ package backend.kassignment.web.resources;
 
 import java.util.List;
 
-public class OrderResource {
+public class PurchaseResource {
 
     private Long id;
     private Long userId;
-    private List<OrderItemResource> orderItems;
-    private Long totalAmount;
+    private List<PurchaseItemResource> purchasedItems;
+    private Double totalAmount;
 
     public Long getId() {
         return id;
@@ -25,19 +25,19 @@ public class OrderResource {
         this.userId = userId;
     }
 
-    public Long getTotalAmount() {
+    public Double getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Long totalAmount) {
+    public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    public List<OrderItemResource> getOrderItems() {
-        return orderItems;
+    public List<PurchaseItemResource> getPurchasedItems() {
+        return purchasedItems;
     }
 
-    public void setOrderItems(List<OrderItemResource> orderItems) {
-        this.orderItems = orderItems;
+    public void setPurchasedItems(List<PurchaseItemResource> purchasedItems) {
+        this.purchasedItems = purchasedItems;
     }
 }
