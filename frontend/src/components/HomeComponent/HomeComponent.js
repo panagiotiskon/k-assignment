@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import axios from "axios";
+import { Modal, Button } from 'react-bootstrap';
 import {
     MDBContainer,
     MDBCardBody,
@@ -21,7 +23,6 @@ import NavBarComponent from "../common/NavBar.js";
 import AddProductModal from "../common/AddProduct.js";
 import UpdateProductModal from "../common/UpdateProduct.js";
 
-
 const HomeComponent = () => {
     const [userRole, setUserRole] = useState("")
     const [products, setProducts] = useState([]);
@@ -35,6 +36,63 @@ const HomeComponent = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [cartItems, setCartItems] = useState([]);
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [userId, setUserId] = useState('');
+
+
+    const addToCart = (productId) => {
+        setCartItems((prevItems) => {
+            const itemIndex = prevItems.findIndex((item) => item.productId === productId);
+            if (itemIndex !== -1) {
+                const updatedItems = [...prevItems];
+                updatedItems[itemIndex].quantity += 1;
+                return updatedItems;
+            } else {
+                return [...prevItems, { productId, quantity: 1 }];
+            }
+        });
+    };
+
+    const incrementQuantity = (productId) => {
+        setCartItems((prevItems) =>
+            prevItems.map((item) =>
+                item.productId === productId ? { ...item, quantity: item.quantity + 1 } : item
+            )
+        );
+    };
+
+    const decrementQuantity = (productId) => {
+        setCartItems((prevItems) =>
+            prevItems
+                .map((item) =>
+                    item.productId === productId ? { ...item, quantity: item.quantity - 1 } : item
+                )
+                .filter((item) => item.quantity > 0) // Remove item if quantity is zero
+        );
+    };
+
+    const removeItem = (productId) => {
+        setCartItems((prevItems) => prevItems.filter((item) => item.productId !== productId));
+    };
+
+    const toggleCart = () => {
+        setIsCartOpen(!isCartOpen);
+    };
+
+    // Submit cart to API
+    const submitCart = () => {
+
+        axios
+            .post(`http://localhost:8080/app/${userId}/purchases`, { itemsToPurchase: cartItems })
+            .then((data) => {
+                console.log('Cart submitted:', data);
+                // Clear cart after submission
+                setCartItems([]);
+                setIsCartOpen(false);
+            })
+            .catch((error) => console.error('Error submitting cart:', error));
+    };
 
     const admin = "ROLE_ADMIN";
     const client = "ROLE_CLIENT";
@@ -88,18 +146,7 @@ const HomeComponent = () => {
 
     }, [page, selectedCompanies, minPrice, maxPrice]);
 
-    // useEffect(() => {
-    //     const filters = {
-    //         companies: selectedCompanies,
-    //         minPrice: minPrice ? parseFloat(minPrice) : undefined,
-    //         maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-    //     };
 
-
-    //     fetchProducts(page, filters);
-
-
-    // }, []);
 
     const handleApplyFilters = () => {
         // Reset products and page number
@@ -131,29 +178,6 @@ const HomeComponent = () => {
         if (node) observer.current.observe(node);
     }, [isLoading, totalPages, page]);
 
-    // useEffect(() => {
-    //     fetchProducts(page);
-    // }, [page, selectedCompanies, minPrice, maxPrice]);
-
-
-
-    // const handleApplyFilters = () => {
-    //     setProducts([]); // Reset products on new filter
-    //     setPage(1); // Reset page to 0
-    //     fetchProducts(1); // Fetch the first page with new filters
-    // };
-
-    // const fetchProducts = async () => {
-    //     setIsLoading(true);
-    //     try {
-    //         const data = await ProductService.getAllProducts();
-    //         setProducts(data.content);
-    //     } catch (error) {
-    //         console.error("Error fetching products:", error);
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
 
     const fetchCompanies = async () => {
         try {
@@ -168,6 +192,7 @@ const HomeComponent = () => {
         try {
             const data = await AuthService.getCurrentUser();
             setUserRole(data.role);
+            setUserId(data.id);
         } catch (error) {
             console.error("Error fetching user role:", error);
         }
@@ -177,16 +202,16 @@ const HomeComponent = () => {
 
 
 
-    //     const fetchProductsByCompany = async () => {
-    //         try {
-    //             const data = await ProductService.getAllProducts({ companies: selectedCompanies }, 1);
-    //             setProducts(data.content);
-    //         } catch (error) {
-    //             console.error("Error fetching products by company:", error);
-    //         }
-    //     };
+    // const fetchProductsByCompany = async () => {
+    // try {
+    // const data = await ProductService.getAllProducts({ companies: selectedCompanies }, 1);
+    // setProducts(data.content);
+    // } catch (error) {
+    // console.error("Error fetching products by company:", error);
+    // }
+    // };
 
-    //     fetchProductsByCompany();
+    // fetchProductsByCompany();
 
     // }, [selectedCompanies]);
 
@@ -195,17 +220,17 @@ const HomeComponent = () => {
     // // For multiple filters
 
     // const fetchFilteredProducts = async () => {
-    //     try {
-    //         const filters = {
-    //             companies: selectedCompanies,
-    //             minPrice: minPrice ? parseFloat(minPrice) : undefined,
-    //             maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-    //         };
-    //         const data = await ProductService.getAllProducts(filters);
-    //         setProducts(data.content);
-    //     } catch (error) {
-    //         console.error("Error fetching filtered products:", error);
-    //     }
+    // try {
+    // const filters = {
+    // companies: selectedCompanies,
+    // minPrice: minPrice ? parseFloat(minPrice) : undefined,
+    // maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+    // };
+    // const data = await ProductService.getAllProducts(filters);
+    // setProducts(data.content);
+    // } catch (error) {
+    // console.error("Error fetching filtered products:", error);
+    // }
     // };
 
 
@@ -249,6 +274,33 @@ const HomeComponent = () => {
     return (
         <>
             <NavBarComponent />
+            <button onClick={toggleCart}>View Cart</button>
+
+            {isCartOpen && <Modal show={isCartOpen} onHide={toggleCart}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Δες τα προιόντα</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {cartItems.length > 0 ? (
+                        <ul>
+                            {cartItems.map((item) => (
+                                <li key={item.productId}>
+                                    Product ID: {item.productId}, Quantity: {item.quantity}
+                                    <button onClick={() => incrementQuantity(item.productId)}>+</button>
+                                    <button onClick={() => decrementQuantity(item.productId)}>-</button>
+                                    <button onClick={() => removeItem(item.productId)}>Remove</button>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>Your cart is empty.</p>
+                    )}
+                </Modal.Body>
+                <Modal.Footer >
+                    <Button variant="secondary" style={{ fontSize: "14px" }} onClick={toggleCart}>Ακύρωση</Button>
+                    <Button variant="black" style={{ fontSize: "14px" }} onClick={submitCart}>Αγορά</Button>
+                </Modal.Footer>
+            </Modal>}
             <MDBContainer className="product-page py-5">
                 <MDBRow>
                     <h6>Φίλτρα</h6>
@@ -290,7 +342,7 @@ const HomeComponent = () => {
                                     alignItems: "center",
                                     justifyContent: "flex-end"
                                 }}>
-                                    <MDBBtn onClick={handleApplyFilters} color="black" className="apply-btn"  >
+                                    <MDBBtn onClick={handleApplyFilters} color="black" className="apply-btn" >
                                         <FontAwesomeIcon icon={faArrowRight} />
                                     </MDBBtn>
                                 </div>
@@ -400,7 +452,7 @@ const HomeComponent = () => {
 
                                             <div className="d-flex justify-content-between align-items-center">
                                                 <p className="fw-bold mb-1 price ">€{product.price}</p>
-                                                <MDBBtn color="warning">
+                                                <MDBBtn color="warning" onClick={() => addToCart(product.id)}>
                                                     <MDBIcon fas icon="shopping-cart" />
                                                     <FontAwesomeIcon icon={faShoppingBasket} style={{ color: 'black' }} />
                                                 </MDBBtn>
