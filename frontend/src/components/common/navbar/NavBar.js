@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import KotsovolosLogo from '../../assets/kotsovolos.png';
+import KotsovolosLogo from '../../../assets/kotsovolos.png';
 import {
     MDBContainer,
     MDBNavbar,
     MDBBtn,
     MDBIcon,
 } from "mdb-react-ui-kit";
-import AuthService from "../../api/AuthenticationAPI";
+import AuthService from "../../../api/AuthenticationAPI";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import './NavBar.scss'

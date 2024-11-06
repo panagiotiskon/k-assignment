@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
-import ProductService from '../../api/ProductApi';
+import ProductService from '../../../api/ProductApi';
 import './Modal.scss'
 
 const UpdateProductModal = ({ show, handleClose, refreshProducts, product }) => {

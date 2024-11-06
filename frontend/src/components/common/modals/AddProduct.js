@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
-import ProductService from '../../api/ProductApi';
+import ProductService from '../../../api/ProductApi';
 import './Modal.scss'
 
 const AddProductModal = ({ show, handleClose, refreshProducts }) => {

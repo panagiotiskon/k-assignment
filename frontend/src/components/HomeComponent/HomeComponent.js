@@ -19,9 +19,9 @@ import './HomeComponent.scss';
 import mobile_phone from '../../assets/mobile_phone.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingBasket, faArrowRight, faTimes, faPen, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import NavBarComponent from "../common/NavBar.js";
-import AddProductModal from "../common/AddProduct.js";
-import UpdateProductModal from "../common/UpdateProduct.js";
+import NavBarComponent from "../common/navbar/NavBar.js";
+import AddProductModal from "../common/modals/AddProduct.js";
+import UpdateProductModal from "../common/modals/UpdateProduct.js";
 
 const HomeComponent = () => {
     const [userRole, setUserRole] = useState("")
