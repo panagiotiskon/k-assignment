@@ -5,6 +5,7 @@ import backend.kassignment.web.requests.ProductCreateUpdateRequest;
 import backend.kassignment.web.requests.ProductPatchRequest;
 import backend.kassignment.web.requests.ProductSearchFilter;
 import backend.kassignment.web.resources.ProductResource;
+import backend.kassignment.web.validators.ProductPatchValidator;
 import backend.kassignment.web.validators.ProductValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -22,17 +23,24 @@ public class ProductController {
 
 
     private final ProductService productService;
+    private final ProductValidator productValidator;
+    private final ProductPatchValidator productPatchValidator;
 
-
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductValidator productValidator, ProductPatchValidator productPatchValidator) {
         this.productService = productService;
+        this.productValidator = productValidator;
+        this.productPatchValidator = productPatchValidator;
     }
 
-    @InitBinder
-    public void binder(WebDataBinder webDataBinder) {
-        webDataBinder.setValidator(new ProductValidator());
+    @InitBinder("productCreateUpdateRequest")
+    public void initCreateUpdateBinder(WebDataBinder binder) {
+        binder.setValidator(productValidator);
     }
 
+    @InitBinder("productPatchRequest")
+    public void initPatchBinder(WebDataBinder binder) {
+        binder.setValidator(productPatchValidator);
+    }
     @GetMapping()
     public ResponseEntity<Page<ProductResource>> getAllProducts(@ModelAttribute ProductSearchFilter productSearchFilterList,
                                                                 @RequestParam(defaultValue = "0") int page,
@@ -58,7 +66,7 @@ public class ProductController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public ProductResource updateProduct(@PathVariable Long productId,
-                                         @RequestBody ProductCreateUpdateRequest productCreateUpdateRequest) {
+                                         @RequestBody @Validated ProductCreateUpdateRequest productCreateUpdateRequest) {
         return productService.updateProduct(productId, productCreateUpdateRequest);
 
     }
@@ -66,7 +74,7 @@ public class ProductController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/{productId}")
     public ProductResource patchProduct(@PathVariable Long productId,
-                                        @RequestBody ProductPatchRequest productPatchRequest) {
+                                        @RequestBody @Validated ProductPatchRequest productPatchRequest) {
         return productService.patchProduct(productId, productPatchRequest);
     }
 
