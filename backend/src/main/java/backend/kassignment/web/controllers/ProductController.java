@@ -49,6 +49,7 @@ public class ProductController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ProductResource createProduct(@RequestBody @Validated ProductCreateUpdateRequest productCreateUpdateRequest) {
         return productService.createProduct(productCreateUpdateRequest);
     }

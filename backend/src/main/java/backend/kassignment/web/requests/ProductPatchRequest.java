@@ -1,19 +1,12 @@
 package backend.kassignment.web.requests;
 
 public class ProductPatchRequest {
-    private Long id;
+
     private String name;
     private String description;
     private Double price;
     private String company;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

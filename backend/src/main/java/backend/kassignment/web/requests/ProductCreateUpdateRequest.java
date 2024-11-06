@@ -4,20 +4,11 @@ import jakarta.validation.constraints.NotNull;
 
 public class ProductCreateUpdateRequest {
 
-    private Long id;
     private String name;
     private String description;
     private Double price;
     private String company;
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     @NotNull(message = "Name can not be null")
     public String getName() {
