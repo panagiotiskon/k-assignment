@@ -23,6 +23,7 @@ public class RateLimitingFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
@@ -31,24 +32,24 @@ public class RateLimitingFilter implements Filter {
 
         if (bucket.tryConsume(1)) {
             chain.doFilter(request, response);
-        } else {
-            httpResponse.setStatus(429); // Use 429 for "Too Many Requests"
+        }
+        else {
+            httpResponse.setStatus(429);
             httpResponse.getWriter().write("Rate limit exceeded. Try again later.");
         }
     }
 
     private Bucket createNewBucket(String ip) {
-        Bandwidth limit = Bandwidth.classic(MAX_REQUESTS_PER_MINUTE, Refill.intervally(MAX_REQUESTS_PER_MINUTE, Duration.ofMinutes(1)));
+        Bandwidth limit = Bandwidth.classic(MAX_REQUESTS_PER_MINUTE,
+                Refill.intervally(MAX_REQUESTS_PER_MINUTE, Duration.ofMinutes(1)));
         return Bucket4j.builder().addLimit(limit).build();
     }
 
     @Override
     public void init(FilterConfig filterConfig) {
-        // No initialization needed
     }
 
     @Override
     public void destroy() {
-        // No resources to clean up
     }
 }

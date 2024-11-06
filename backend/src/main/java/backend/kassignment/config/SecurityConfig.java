@@ -2,6 +2,7 @@ package backend.kassignment.config;
 
 import backend.kassignment.security.JwtAuthEntryPoint;
 import backend.kassignment.security.JwtAuthenticationFilter;
+import backend.kassignment.security.RateLimitingFilter;
 import backend.kassignment.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +23,13 @@ public class SecurityConfig {
 
     private final JwtAuthEntryPoint entryPoint;
     private final UserService userService;
+    private final RateLimitingFilter rateLimitingFilter;
 
 
-    public SecurityConfig(JwtAuthEntryPoint entryPoint, UserService userService) {
+    public SecurityConfig(JwtAuthEntryPoint entryPoint, UserService userService, RateLimitingFilter rateLimitingFilter) {
         this.entryPoint = entryPoint;
         this.userService = userService;
+        this.rateLimitingFilter = rateLimitingFilter;
     }
 
     @Bean
@@ -41,6 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/app/**").hasAnyRole("ADMIN", "CLIENT")
                         .requestMatchers("/auth/**").permitAll())
+                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
 

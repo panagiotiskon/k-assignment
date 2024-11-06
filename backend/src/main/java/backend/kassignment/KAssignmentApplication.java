@@ -14,12 +14,4 @@ public class KAssignmentApplication {
     public static void main(String[] args) {
         SpringApplication.run(KAssignmentApplication.class, args);
     }
-
-    @Bean
-    public FilterRegistrationBean<RateLimitingFilter> rateLimitingFilter() {
-        FilterRegistrationBean<RateLimitingFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new RateLimitingFilter());
-        registrationBean.addUrlPatterns("/app/*");
-        return registrationBean;
-    }
 }
