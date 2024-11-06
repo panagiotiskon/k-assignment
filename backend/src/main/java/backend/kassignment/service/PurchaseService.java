@@ -66,6 +66,8 @@ public class PurchaseService {
         Map<Long, Product> products = productRepository.findAllById(productIds)
                 .stream().collect(Collectors.toMap(Product::getId, product -> product));
 
+        // create purchase
+
         Purchase purchase = purchaseMapper.mapToPurchase(user);
 
         // create purchase items from products
@@ -87,9 +89,12 @@ public class PurchaseService {
 
         purchase.setTotalAmount(totalAmount);
         purchase.setPurchaseItems(purchaseItems);
+
         // save purchase and purchase items
 
         purchaseRepository.save(purchase);
+
+        // map & return purchase resource
 
         List<PurchaseItemResource> purchaseItemResourceList = purchaseItems.stream()
                 .map(purchaseItemMapper::mapToPurchaseItemResource)

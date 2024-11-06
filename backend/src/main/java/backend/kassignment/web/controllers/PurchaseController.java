@@ -14,11 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("app/{userId}/purchases")
 public class PurchaseController {
 
-//    @GetMapping("/{userId}")
-//    public Page<> getOrders(@PathVariable Long userId, Pageable pageable) {
-//
-//    }
-
     private final PurchaseService purchaseService;
 
     public PurchaseController(PurchaseService purchaseService) {
@@ -37,8 +32,5 @@ public class PurchaseController {
         return purchaseService.createPurchase(userId, purchaseCreateRequest);
     }
 
-//    @DeleteMapping
-//    @PreAuthorize("hasRole('ROLE_CLIENT')")
-//    @ResponseStatus(HttpStatus.OK)
 
 }

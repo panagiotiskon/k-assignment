@@ -1,3 +1,4 @@
+-- V7__create_purchase_item_table.sql
 CREATE TABLE IF NOT EXISTS purchase_item
 (
     id           BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -7,7 +8,7 @@ CREATE TABLE IF NOT EXISTS purchase_item
     created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (purchase_id) REFERENCES `purchase` (id),
+    FOREIGN KEY (purchase_id) REFERENCES purchase (id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product(id)
 
 );

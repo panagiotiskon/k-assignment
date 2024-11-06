@@ -1,6 +1,5 @@
 -- V6__create_purchase_table.sql
-
-CREATE TABLE IF NOT EXISTS `purchase`
+CREATE TABLE IF NOT EXISTS purchase
 (
     id           BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id      BIGINT NOT NULL,
