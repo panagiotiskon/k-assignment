@@ -7,8 +7,6 @@ services:
     ports:                      #  host port and container port
       - "3307:3306"
     environment:                    # basic environment variables - they differ in each image
-#      - MYSQL_USER=root                 # set up a user and a password
-#      - MYSQL_PASSWORD=password
       - MYSQL_ROOT_PASSWORD=password      # this is the predefined root password
       - MYSQL_DATABASE=kAssignment            # db name
     healthcheck:
