@@ -49,6 +49,14 @@ public class PurchaseService {
         this.purchaseItemMapper = purchaseItemMapper;
     }
 
+    /**
+     * Creates a new purchase for a given user.
+     *
+     * @param userId User who makes the purchase
+     * @param purchaseCreateRequest Request object containing the items to purchase
+     * @return The resource representing the created purchase
+     */
+
     @Transactional
     public PurchaseResource createPurchase(Long userId, PurchaseCreateRequest purchaseCreateRequest) {
 
