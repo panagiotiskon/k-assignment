@@ -2,7 +2,7 @@
 
 ## User Authentication / Authorization
 
-The application includes two roles: Administrator (Admin) and Customer (Client). Upon initializing the application, a default Admin and Client account are pre-configured with the following credentials:
+The application includes two roles: Administrator and Client. Upon initializing the application, a default Admin and Client account are pre-configured with the following credentials:
 
 - **Admin Account**  
   - **Email:** `admin@example.com`
@@ -12,7 +12,7 @@ The application includes two roles: Administrator (Admin) and Customer (Client).
   - **Email:** `client@example.com`
   - **Password:** `password`
 
-User role verification is managed through JWT (JSON Web Tokens). Specifically, upon each successful user authentication, the application sends a cookie containing a JWT with the user's information. 
+User role verification is managed through JWT. Specifically, upon each successful user authentication, the application sends a cookie containing a JWT with the user's information. 
 
 Role management is handled through Spring Security, with specific configurations to restrict actions based on user roles (Admin and Client). The setup includes both method-level and URL-based security.
 
@@ -32,7 +32,7 @@ Additionally, the `ProductService` class supports pagination to manage large set
    - If a minimum price is specified, the query will filter for products where the `price` field is greater than or equal to this minimum.
    - If a maximum price is specified, it will limit results to products with a `price` less than or equal to this maximum.
 
-## Requests Validation & Exception Handling
+## Validation & Exception Handling
 
 ### Validation
 
